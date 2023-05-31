@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Favorites</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    /* Styling for the tables and container */
+    .table-container {
+      display: none;
+      overflow-y: auto; /* Enable vertical scrolling */
+      max-height: 300px; /* Set a maximum height for the container */
+      margin-bottom: 20px; /* Add some spacing between tables */
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 8px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    /* Styling for the switch button */
+    .switch-button {
+      padding: 10px;
+      border-radius: 4px;
+      background-color: #4CAF50;
+      color: white;
+      cursor: pointer;
+      margin-bottom: 20px;
+    }
+
+    /* Styling for the dashboard button */
+    .dashboard-button {
+      padding: 10px;
+      border-radius: 4px;
+      background-color: #4287f5;
+      color: white;
+      cursor: pointer;
+    }
+  </style>
+  <script>
+    function toggleTable() {
+      var cityTableContainer = document.getElementById("city-table-container");
+      var weatherTableContainer = document.getElementById("weather-table-container");
+      var switchButton = document.getElementById("switch-button");
+
+      if (cityTableContainer.style.display === "none") {
+        cityTableContainer.style.display = "block";
+        weatherTableContainer.style.display = "none";
+        switchButton.innerText = "Switch to Weather";
+      } else {
+        cityTableContainer.style.display = "none";
+        weatherTableContainer.style.display = "block";
+        switchButton.innerText = "Switch to City";
+      }
+    }
+
+    function goToDashboard() {
+      window.location.href = "/api/v1/pages/dashboard"; // Redirect to the dashboard page
+    }
+  </script>
+</head>
+<body>
+<div class="container text-center">
+  <h1>Favorites</h1>
+  <button id="switch-button" class="btn btn-success" onclick="toggleTable()">Switch to Weather</button>
+  <button class="btn btn-primary dashboard-button" onclick="goToDashboard()">Dashboard</button> <!-- Button to redirect to dashboard -->
+
+  <!-- City Table -->
+  <div id="city-table-container" class="table-container">
+    <h2>City Favorites</h2>
+    <table class="table table-bordered">
+      <thead>
+      <tr>
+        <th>Name</th>
+        <th>Country</th>
+        <th>Timezone</th>
+        <th>Population</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="city : ${cityList}">
+        <td th:text="${city.name}"></td>
+        <td th:text="${city.country}"></td>
+        <td th:text="${city.timezone}"></td>
+        <td th:text="${city.population}"></td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Weather Table -->
+  <div id="weather-table-container" class="table-container">
+    <h2>Weather Favorites</h2>
+    <table class="table table-bordered">
+      <thead>
+      <tr>
+        <th>City</th>
+        <th>Main</th>
+        <th>Description</th>
+        <th>Temperature</th>
+        <th>Feels Like</th>
+        <th>Min Temperature</th>
+        <th>Max Temperature</th>
+        <th>Humidity</th>
+        <th>Date/Time</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="weather : ${weatherList}">
+        <td th:text="${weather.city.name}"></td>
+        <td th:text="${weather.main}"></td>
+        <td th:text="${weather.description}"></td>
+        <td th:text="${weather.temperature}"></td>
+        <td th:text="${weather.feelsLike}"></td>
+        <td th:text="${weather.minTemperature}"></td>
+        <td th:text="${weather.maxTemperature}"></td>
+        <td th:text="${weather.humidity}"></td>
+        <td th:text="${weather.dateTime}"></td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

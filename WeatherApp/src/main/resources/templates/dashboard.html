@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Styling for the tables and container */
+        .table-container {
+            display: none;
+            overflow-y: auto; /* Enable vertical scrolling */
+            max-height: 300px; /* Set a maximum height for the container */
+            margin-bottom: 20px; /* Add some spacing between tables */
+        }
+
+        /* Styling for the switch button */
+        .switch-button {
+            padding: 10px;
+            border-radius: 4px;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        /* Styling for the favorites button */
+        .favorites-button {
+            padding: 10px;
+            border-radius: 4px;
+            background-color: #4287f5;
+            color: white;
+            cursor: pointer;
+        }
+    </style>
+    <script>
+        function toggleTable() {
+            var cityTableContainer = document.getElementById("city-table-container");
+            var weatherTableContainer = document.getElementById("weather-table-container");
+            var switchButton = document.getElementById("switch-button");
+
+            if (cityTableContainer.style.display === "none") {
+                cityTableContainer.style.display = "block";
+                weatherTableContainer.style.display = "none";
+                switchButton.innerText = "Switch to Weather";
+            } else {
+                cityTableContainer.style.display = "none";
+                weatherTableContainer.style.display = "block";
+                switchButton.innerText = "Switch to City";
+            }
+        }
+
+        function addToFavorites(type, id) {
+            // Send a PUT request to the respective endpoint based on the item type and id
+            if (type === 'city') {
+                fetch('/api/v1/user/updateCity/9?cityid=' + id, {
+                    method: 'PUT'
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            alert('City added to favorites!');
+                        } else {
+                            alert('Failed to add city to favorites.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            } else if (type === 'weather') {
+                fetch('/api/v1/user/updateWeather/9?weatherid=' + id, {
+                    method: 'PUT'
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            alert('Weather added to favorites!');
+                        } else {
+                            alert('Failed to add weather to favorites.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            // Add event listeners to table rows
+            var cityRows = document.querySelectorAll("#city-table-container tbody tr");
+            var weatherRows = document.querySelectorAll("#weather-table-container tbody tr");
+
+            cityRows.forEach(function(row) {
+                row.addEventListener("click", function() {
+                    var cityId = this.dataset.cityId;
+                    addToFavorites('city', cityId);
+                });
+            });
+
+            weatherRows.forEach(function(row) {
+                row.addEventListener("click", function() {
+                    var weatherId = this.dataset.weatherId;
+                    addToFavorites('weather', weatherId);
+                });
+            });
+        });
+
+        function goToFavorites() {
+            window.location.href = "/api/v1/pages/favorites";
+        }
+
+    </script>
+</head>
+<body>
+<div class="container text-center">
+    <h1>Dashboard</h1>
+    <div class="btn-group">
+        <button id="switch-button" class="btn btn-success" onclick="toggleTable()">Switch to Weather</button>
+        <button id="favorites-button" class="btn btn-primary" onclick="goToFavorites()">Favorites</button>
+    </div>
+
+    <!-- City Table -->
+    <div id="city-table-container" class="table-container">
+        <h2>City Table</h2>
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Country</th>
+                <th>Timezone</th>
+                <th>Population</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Use Thymeleaf to iterate over cityList and populate the table rows -->
+            <tr th:each="city : ${cityList}" th:data-city-id="${city.id}">
+                <td th:text="${city.name}"></td>
+                <td th:text="${city.country}"></td>
+                <td th:text="${city.timezone}"></td>
+                <td th:text="${city.population}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Weather Table -->
+    <div id="weather-table-container" class="table-container">
+        <h2>Weather Table</h2>
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th>City</th>
+                <th>Main</th>
+                <th>Description</th>
+                <th>Temperature</th>
+                <th>Feels Like</th>
+                <th>Min Temperature</th>
+                <th>Max Temperature</th>
+                <th>Humidity</th>
+                <th>Date</th>
+                <th>Time</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="weather : ${weatherList}" th:data-weather-id="${weather.id}">
+                <td>
+                    <span th:each="city : ${cityList}" th:if="${city.id == weather.cityId}" th:text="${city.name}"></span>
+                </td>
+                <td th:text="${weather.main}"></td>
+                <td th:text="${weather.description}"></td>
+                <td th:text="${weather.temperature}"></td>
+                <td th:text="${weather.feelsLike}"></td>
+                <td th:text="${weather.minTemperature}"></td>
+                <td th:text="${weather.maxTemperature}"></td>
+                <td th:text="${weather.humidity}"></td>
+                <td>
+                    <span th:text="${#strings.substring(weather.dateTime, 0, 10)}"></span>
+                </td>
+                <td>
+                    <span th:text="${#strings.substring(weather.dateTime, 11, 16)}"></span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
