@@ -134,7 +134,7 @@ Don't forget to give the project a star! Thanks again!
 
 Ersin Yılmaz ASLAN - [My Website](https://kinto2517.github.io) - ersin.yilmaz2517@gmail.com
 
-Project Link: [https://github.com/Akbank-Patika-dev-Java-Spring-Bootcamp/homework-1-Kinto2517](https://github.com/Akbank-Patika-dev-Java-Spring-Bootcamp/homework-1-Kinto2517)
+Project Link: [https://github.com/Kinto2517/AkbankFinalProject](https://github.com/Kinto2517/AkbankFinalProject)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
